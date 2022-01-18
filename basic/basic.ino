@@ -1,8 +1,5 @@
 #include <ESP32Servo.h>
 Servo penguin;
-// WiFi情報
-const char* ssid = "xxxxxx";
-const char* pass = "xxxxxx";
 
 #define motor 13 
 #define switching 5 
