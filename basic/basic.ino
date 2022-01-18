@@ -8,27 +8,27 @@ RTC_DATA_ATTR int keyStatus;
 
 void open(void)
 {
-    digitalWrite( switching, HIGH );
-    for (int i = 0; i <= 120; i++) 
-    {
-      penguin.write(130-i);
-      delay(10);
-    } 
-    digitalWrite( switching, LOW );
-    keyStatus=0;
+  digitalWrite( switching, HIGH );
+  for (int i = 0; i <= 120; i++) 
+  {
+    penguin.write(130-i);
+    delay(10);
+  } 
+  digitalWrite( switching, LOW );
+  keyStatus=0;
 }
 
 void lock()
 {
-    digitalWrite( switching, HIGH );
+  digitalWrite( switching, HIGH );
     
-    for (int i = 0; i <= 120; i++) 
-    {
-      penguin.write(10+i);
-      delay(10);
-    } 
-    digitalWrite( switching, LOW );
-    keyStatus=1;
+  for (int i = 0; i <= 120; i++) 
+  {
+    penguin.write(10+i);
+    delay(10);
+  } 
+  digitalWrite( switching, LOW );
+  keyStatus=1;
 }
 
 // 初期化
@@ -37,9 +37,9 @@ void setup()
   // シリアルポートの初期化
   Serial.begin(115200);
 
-    pinMode(button, INPUT);
-    pinMode(switching, OUTPUT);
-    penguin.attach(motor);
+  pinMode(button, INPUT);
+  pinMode(switching, OUTPUT);
+  penguin.attach(motor);
   
   if(digitalRead(button)==0)
   {
