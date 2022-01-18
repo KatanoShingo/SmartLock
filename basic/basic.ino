@@ -8,7 +8,6 @@ const char* ssid = "xxxxxx";
 const char* pass = "xxxxxx";
 
 #define motor 13 
-#define doorSensor 15
 #define switching 5 
 double UnlockClosedDoorTime = 0;
 unsigned long preTime;
@@ -63,7 +62,6 @@ void handleNotFound(void)
 // 初期化
 void setup()
 {
-    pinMode(doorSensor, INPUT_PULLUP );
     pinMode(switching, OUTPUT);
     penguin.attach(motor);
   
@@ -102,7 +100,6 @@ void setup()
     server.begin();
 }
 
-int pret;
 // 処理ループ
 void loop()
 {
@@ -110,20 +107,18 @@ void loop()
   
   unsigned long nowTime = millis();
   frameTime  = (nowTime-preTime)/1000.0;
-  int  t = digitalRead( doorSensor ); 
 
   if(UnlockClosedDoorTime>0)
   {
     UnlockClosedDoorTime += frameTime;
   }
   
-  if((t == 0 && pret == 1) || (UnlockClosedDoorTime > 10 && t == 0))
+  if(UnlockClosedDoorTime > 10)
   {
     Serial.println("閉じる");
     lock();
   }
   
-  pret = t;
   preTime = nowTime;
 
   delay(100);
