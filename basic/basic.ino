@@ -4,11 +4,11 @@ Servo penguin;
 #define motor 13 
 #define switching 5 
 #define button 0
-int keyStatus;
+RTC_DATA_ATTR int keyStatus;
+
 void open(void)
 {
     digitalWrite( switching, HIGH );
-    
     for (int i = 0; i <= 120; i++) 
     {
       penguin.write(130-i);
@@ -34,17 +34,13 @@ void lock()
 // 初期化
 void setup()
 {
+  // シリアルポートの初期化
+  Serial.begin(115200);
+
     pinMode(button, INPUT);
     pinMode(switching, OUTPUT);
     penguin.attach(motor);
   
-    // シリアルポートの初期化
-    Serial.begin(115200);
-}
-
-// 処理ループ
-void loop()
-{
   if(digitalRead(button)==0)
   {
     if(keyStatus==0)
@@ -56,4 +52,13 @@ void loop()
       open();
     }
   }                 
+  
+  pinMode(GPIO_NUM_0, INPUT_PULLUP);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, LOW);
+  esp_deep_sleep_start();
+}
+
+// 処理ループ
+void loop()
+{             
 }
