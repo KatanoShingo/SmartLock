@@ -4,8 +4,8 @@ Servo penguin;
 #define motor 13 
 #define switching 5 
 #define button 0
-
-void unlock(void)
+int keyStatus;
+void open(void)
 {
     digitalWrite( switching, HIGH );
     
@@ -14,8 +14,8 @@ void unlock(void)
       penguin.write(130-i);
       delay(10);
     } 
-    delay(1000);
     digitalWrite( switching, LOW );
+    keyStatus=0;
 }
 
 void lock()
@@ -28,6 +28,7 @@ void lock()
       delay(10);
     } 
     digitalWrite( switching, LOW );
+    keyStatus=1;
 }
 
 // 初期化
@@ -46,6 +47,13 @@ void loop()
 {
   if(digitalRead(button)==0)
   {
-    lock();
+    if(keyStatus==0)
+    {
+      lock();
+    }
+    else
+    {
+      open();
+    }
   }                 
 }
