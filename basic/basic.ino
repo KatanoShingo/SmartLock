@@ -3,6 +3,7 @@ Servo penguin;
 
 #define motor 13 
 #define switching 5 
+#define button 0
 
 void unlock(void)
 {
@@ -19,7 +20,6 @@ void unlock(void)
 
 void lock()
 {
-    delay(1000);
     digitalWrite( switching, HIGH );
     
     for (int i = 0; i <= 120; i++) 
@@ -27,13 +27,13 @@ void lock()
       penguin.write(10+i);
       delay(10);
     } 
-    delay(1000);
     digitalWrite( switching, LOW );
 }
 
 // 初期化
 void setup()
 {
+    pinMode(button, INPUT);
     pinMode(switching, OUTPUT);
     penguin.attach(motor);
   
@@ -44,5 +44,8 @@ void setup()
 // 処理ループ
 void loop()
 {
-  delay(100);
+  if(digitalRead(button)==0)
+  {
+    lock();
+  }                 
 }
