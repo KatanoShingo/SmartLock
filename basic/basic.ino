@@ -9,11 +9,7 @@ const char* pass = "xxxxxx";
 
 #define motor 13 
 #define switching 5 
-double UnlockClosedDoorTime = 0;
-unsigned long preTime;
-double timeCountLock = 0;
 String html;
-double frameTime;
 // 初期画面
 void handleRoot(void)
 {
@@ -35,7 +31,6 @@ void unlock(void)
     } 
     delay(1000);
     digitalWrite( switching, LOW );
-    UnlockClosedDoorTime += frameTime;
 }
 
 void lock()
@@ -50,7 +45,6 @@ void lock()
     } 
     delay(1000);
     digitalWrite( switching, LOW );
-    UnlockClosedDoorTime = 0;
 }
 
 // 存在しないアドレスが指定された時の処理
@@ -104,22 +98,5 @@ void setup()
 void loop()
 {
   server.handleClient();
-  
-  unsigned long nowTime = millis();
-  frameTime  = (nowTime-preTime)/1000.0;
-
-  if(UnlockClosedDoorTime>0)
-  {
-    UnlockClosedDoorTime += frameTime;
-  }
-  
-  if(UnlockClosedDoorTime > 10)
-  {
-    Serial.println("閉じる");
-    lock();
-  }
-  
-  preTime = nowTime;
-
   delay(100);
 }
