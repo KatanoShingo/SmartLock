@@ -1,11 +1,16 @@
 #include <ESP32Servo.h>
-Servo penguin;
+#include <nRF24L01.h>
 
+int request;
+Servo penguin;
+#include <RF24.h>
 #define motor 13 
 #define switching 5 
 #define button 0
 RTC_DATA_ATTR int keyStatus;
 
+RF24 radio(4, 22);               // CE,CSNピンの指定
+const byte address[6] = "00001";  // データを受信するアドレス
 void open(void)
 {
   digitalWrite( switching, HIGH );
@@ -41,24 +46,32 @@ void setup()
   pinMode(switching, OUTPUT);
   penguin.attach(motor);
   
-  if(digitalRead(button)==0)
+  radio.begin();                    // 無線オブジェクトの初期化
+  radio.openReadingPipe(0, address);// データ受信アドレスを指定
+  radio.setPALevel(RF24_PA_MIN);    // 出力を最小に
+  radio.startListening();           // 受信側として設定
+ 
+  delay(10);
+  if(radio.available())
   {
-    if(keyStatus==0)
+    radio.read(&request, sizeof(request));
+    if(request==0)
     {
-      lock();
+      if(keyStatus==0)
+      {
+        lock();
+      }
+      else
+      {
+        open();
+      }
     }
-    else
-    {
-      open();
-    }
-  }                 
+  }          
   
-  pinMode(GPIO_NUM_0, INPUT_PULLUP);
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, LOW);
+  esp_sleep_enable_timer_wakeup(1000000);
   esp_deep_sleep_start();
 }
 
-// 処理ループ
 void loop()
 {             
 }
