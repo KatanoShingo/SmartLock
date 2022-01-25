@@ -68,7 +68,7 @@ void setup()
     }
   }          
   
-  esp_sleep_enable_timer_wakeup(1000000);
+  esp_sleep_enable_timer_wakeup(2 * 1000 * 1000);
   esp_deep_sleep_start();
 }
 
