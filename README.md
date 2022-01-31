@@ -1,9 +1,9 @@
-# SmartLock
-材料
-### 送信側
-- ESP32開発ボード
+# Low-cost, scalable, space-saving, and power-saving smart lock project
+# Material
+## master
+- ESP32
 - nRF24L01
-### 受信側
+## slave
 - ESP32
 - nRF24L01
 - CR123A
