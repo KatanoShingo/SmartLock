@@ -20,15 +20,13 @@ const char* password   = "YOUR_PASS";
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600*9;
 const int   daylightOffset_sec = 0;
+struct tm timeInfoNow;
+hw_timer_t *timer = NULL;
 
-void printLocalTime()
+void IRAM_ATTR resetModule() 
 {
-  struct tm timeinfo;
-  if(!getLocalTime(&timeinfo)){
-    Serial.println("Failed to obtain time");
-    return;
-  }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  ets_printf("reboot\n");
+  esp_restart();
 }
 
 void setup()
@@ -47,8 +45,14 @@ void setup()
 
   //時間を初期化
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  printLocalTime();
+  getLocalTime(&timeInfoNow);
 
+  struct tm timeInfoFuture=timeInfoNow;
+  timeInfoFuture.tm_mday++;
+  timeInfoFuture.tm_hour=0;
+  timeInfoFuture.tm_min=0;
+  timeInfoFuture.tm_sec=0;
+  double wdtTimeout=difftime( mktime(&timeInfoFuture),mktime(&timeInfoNow));
   //不要になったWiFiを切り離す
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
@@ -64,6 +68,14 @@ void setup()
 
   Blynk.begin(auth);
   Blynk.run();
+
+  Serial.println("再起動しました");
+  Serial.print(wdtTimeout);
+  Serial.println("秒後に再起動します");
+  timer = timerBegin(0, 80, true);                  //timer 0, div 80
+  timerAttachInterrupt(timer, &resetModule, true);  //attach callback
+  timerAlarmWrite(timer, wdtTimeout * 1000* 1000, false); //set time in us
+  timerAlarmEnable(timer);                          //enable interrupt
 }
 
 void loop()
