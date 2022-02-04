@@ -11,29 +11,23 @@ RTC_DATA_ATTR int keyStatus;
 
 RF24 radio(4, 22);               // CE,CSNピンの指定
 const byte address[6] = "00001";  // データを受信するアドレス
-void open(void)
-{
-  digitalWrite( switching, HIGH );
-  for (int i = 0; i <= 120; i++) 
-  {
-    penguin.write(130-i);
-    delay(10);
-  } 
-  digitalWrite( switching, LOW );
-  keyStatus=0;
-}
 
-void lock()
+// -1 or +1
+void turn(int direction) 
 {
   digitalWrite( switching, HIGH );
-    
-  for (int i = 0; i <= 120; i++) 
+  for (int angle = 0; angle <= 90; angle++) 
   {
-    penguin.write(10+i);
+    penguin.write(90+(direction*angle));
+    delay(10);
+  } 
+  delay(500);
+  for (int angle = 0; angle <= 90; angle++) 
+  {
+    penguin.write(90+(direction*(90-angle)));
     delay(10);
   } 
   digitalWrite( switching, LOW );
-  keyStatus=1;
 }
 
 // 初期化
@@ -44,7 +38,8 @@ void setup()
 
   pinMode(button, INPUT);
   pinMode(switching, OUTPUT);
-  penguin.attach(motor);
+  // MG90の設定
+  penguin.attach(motor, 544, 2600);
   
   radio.begin();                    // 無線オブジェクトの初期化
   radio.openReadingPipe(0, address);// データ受信アドレスを指定
@@ -57,14 +52,16 @@ void setup()
     radio.read(&request, sizeof(request));
     if(request==0)
     {
-      if(keyStatus==0)
+      if(keyStatus==1)
       {
-        lock();
+        keyStatus = -1;
       }
       else
       {
-        open();
+        keyStatus = 1;
       }
+      
+      turn(keyStatus);
     }
   }          
   
