@@ -15,8 +15,6 @@
 ## 📗Schematic
 ### slave
 ![slave](https://user-images.githubusercontent.com/40855834/152093557-c560f72f-6dca-4a62-a44f-2877a5243c68.png)
-## 🖨️STL
-![case](https://user-images.githubusercontent.com/40855834/152626730-fc1e998d-ebb7-4a92-8ae0-9dc62f2fa112.png)
 
 ## 💪Contributing
 - If you find a bug, please open Issues.    
